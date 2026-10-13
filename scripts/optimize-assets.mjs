@@ -1,8 +1,9 @@
 /**
  * 把 assets-src/ 里的原始素材处理成站点使用的 public/media/ 文件：
- * - 校徽（透明/白底方形）、favicon
+ * - 校徽（圆形透明底）、favicon
  * - 「江苏省泰州中学」字标
  * - 射命丸文插画（webp）
+ * - 插画的墨色水印版（报头/页脚背景用）与竖版校徽标识（页脚用）
  * - 分享卡片 og.jpg
  * 并打印校徽主色，供 CSS 使用。
  * 用法：npm run assets
@@ -31,9 +32,14 @@ const emblemSlice = await sharp(emblemSource)
   .png()
   .toBuffer();
 
+const circleMask = Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><circle cx="256" cy="256" r="255.5" fill="#ffffff"/></svg>',
+);
+
 const emblemBuffer = await sharp(emblemSlice)
   .trim({ threshold: 12 })
-  .resize(512, 512, { fit: "contain", background: { r: 255, g: 255, b: 255, alpha: 1 } })
+  .resize(512, 512, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+  .composite([{ input: circleMask, blend: "dest-in" }])
   .png()
   .toBuffer();
 
@@ -93,6 +99,38 @@ const standingMeta = await sharp(standingTrimmed)
   .webp({ quality: 85 })
   .toFile(path.join(out, "aya-standing.webp"));
 
+// 竖版校徽：页脚的出版标识
+const stackSource = path.join(src, "校徽-竖版.png");
+await sharp(stackSource)
+  .trim({ threshold: 12 })
+  .resize({ height: 132 })
+  .webp({ quality: 90 })
+  .toFile(path.join(out, "school-stack.webp"));
+
+// 插画转墨色水印：亮部透明、暗部为品牌青色，可叠在任意背景上
+const INK = { r: 0x00, g: 0x76, b: 0x72 };
+async function writeInkImage(input, output, resize) {
+  const { data, info } = await sharp(input)
+    .resize(resize)
+    .flatten({ background: "#ffffff" })
+    .grayscale()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const pixels = Buffer.alloc(info.width * info.height * 4);
+  for (let i = 0, j = 0; i < data.length; i += 1, j += 4) {
+    pixels[j] = INK.r;
+    pixels[j + 1] = INK.g;
+    pixels[j + 2] = INK.b;
+    pixels[j + 3] = 255 - data[i];
+  }
+  await sharp(pixels, { raw: { width: info.width, height: info.height, channels: 4 } })
+    .webp({ quality: 90 })
+    .toFile(output);
+}
+
+await writeInkImage(flyingSource, path.join(out, "ink-aya-flying.webp"), { width: 1400 });
+await writeInkImage(standingTrimmed, path.join(out, "ink-aya-standing.webp"), { height: 1100 });
+
 const { data, info } = await sharp(emblemBuffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 let r = 0;
 let g = 0;
@@ -111,7 +149,18 @@ for (let i = 0; i < data.length; i += info.channels) {
 const hex = (value) => Math.round(value / count).toString(16).padStart(2, "0");
 console.log(`校徽主色：#${hex(r)}${hex(g)}${hex(b)}（可直接用于 CSS 的 --brand）`);
 
-const outputs = ["emblem.png", "emblem-sm.png", "wordmark.png", "aya-camera.webp", "aya-flying.webp", "aya-standing.webp", "og.jpg"];
+const outputs = [
+  "emblem.png",
+  "emblem-sm.png",
+  "wordmark.png",
+  "school-stack.webp",
+  "aya-camera.webp",
+  "aya-flying.webp",
+  "aya-standing.webp",
+  "ink-aya-flying.webp",
+  "ink-aya-standing.webp",
+  "og.jpg",
+];
 for (const file of outputs) {
   const info = await sharp(path.join(out, file)).metadata();
   console.log(`${file}  ${info.width}x${info.height}`);

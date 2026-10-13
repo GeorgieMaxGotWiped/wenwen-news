@@ -30,7 +30,10 @@ export default function SiteFooter() {
           <Link href="/admin/">编辑部入口</Link>
         </nav>
       </div>
-      <div className="footer-bottom">© {year} 文文。新闻 · 学生自办</div>
+      <div className="footer-bottom">
+        <img className="footer-colophon" src="/media/school-stack.webp" alt="江苏省泰州中学" />
+        <span>© {year} 文文。新闻 · 学生自办</span>
+      </div>
     </footer>
   );
 }

@@ -1,12 +1,12 @@
 /* 文文。新闻 · 站点样式 */
 
 :root {
-  --paper: #ffffff;
-  --paper-dim: #f2f4f3;
+  --paper: #f6f9f8;
+  --paper-dim: #ecf1ef;
   --ink: #191c1b;
   --ink-2: #4a524f;
   --ink-3: #6d7572;
-  --hairline: #dbe0de;
+  --hairline: #d5dbd9;
   --rule-strong: #191c1b;
   --brand: #007672;
   --accent: #b3392e;
@@ -23,11 +23,20 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  background-color: var(--paper);
+  /* 纸面质感：细噪点 + 顶部青绿色晕染 + 极浅的纵向渐变 */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    radial-gradient(1250px 560px at 84% -140px, rgba(0, 118, 114, 0.09), rgba(0, 118, 114, 0) 62%),
+    linear-gradient(180deg, #f2f7f5 0%, #fbfcfc 48%, #f5f8f7 100%);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: 180px 180px, auto, auto;
 }
 
 body {
   margin: 0;
-  background: var(--paper);
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -109,7 +118,24 @@ a {
 }
 
 .masthead {
+  position: relative;
   padding-top: 18px;
+}
+
+/* 报头背景水印：射命丸文插画的墨色版，负 z-index 让它压在所有文字之下 */
+.masthead::before {
+  content: "";
+  position: absolute;
+  top: 32px;
+  right: -80px;
+  width: min(46vw, 640px);
+  aspect-ratio: 1024 / 543;
+  background: url("/media/ink-aya-flying.webp") no-repeat center / contain;
+  opacity: 0.3;
+  -webkit-mask-image: radial-gradient(145% 130% at 90% 6%, #000 16%, transparent 66%);
+  mask-image: radial-gradient(145% 130% at 90% 6%, #000 16%, transparent 66%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .nameplate {
@@ -641,6 +667,7 @@ a {
 .about-mark img {
   width: 300px;
   max-width: 100%;
+  mix-blend-mode: multiply;
 }
 
 .about-credits {
@@ -726,9 +753,28 @@ a {
 /* 页脚 */
 
 .footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   margin-top: 70px;
   border-top: 2.5px solid var(--rule-strong);
   background: var(--paper-dim);
+}
+
+/* 页脚背景水印：立绘的墨色版，从底部向上淡出 */
+.footer::before {
+  content: "";
+  position: absolute;
+  right: 40px;
+  bottom: -30px;
+  width: min(20vw, 230px);
+  aspect-ratio: 801 / 900;
+  background: url("/media/ink-aya-standing.webp") no-repeat center bottom / contain;
+  opacity: 0.36;
+  -webkit-mask-image: linear-gradient(to top, #000 40%, transparent 96%);
+  mask-image: linear-gradient(to top, #000 40%, transparent 96%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .footer-inner {
@@ -785,11 +831,28 @@ a {
   border-top: 1px solid var(--hairline);
   font-size: 12px;
   color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
+.footer-colophon {
+  height: 48px;
+  width: auto;
+  mix-blend-mode: multiply;
 }
 
 /* 响应式 */
 
 @media (max-width: 880px) {
+  .masthead::before {
+    top: 30px;
+    right: -54px;
+    width: min(70vw, 430px);
+    opacity: 0.3;
+  }
+
   .nameplate {
     grid-template-columns: 1fr;
     gap: 6px;
@@ -839,6 +902,17 @@ a {
   .footer-inner {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .footer::before {
+    right: 10px;
+    bottom: -20px;
+    width: min(42vw, 170px);
+    opacity: 0.3;
+  }
+
+  .footer-colophon {
+    height: 40px;
   }
 }
 
