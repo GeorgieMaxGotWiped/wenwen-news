@@ -1,0 +1,114 @@
+# 《文文。新闻》内容后台配置
+# 部署后需要修改两处（见 README）：repo 和 base_url / site_url 里 EXAMPLE 开头的域名。
+
+backend:
+  name: github
+  repo: OWNER/REPO
+  branch: main
+  base_url: https://EXAMPLE.vercel.app/api
+  commit_messages:
+    create: "新增文章：{{title}}"
+    update: "更新文章：{{title}}"
+    delete: "删除文章：{{title}}"
+    uploadMedia: "上传素材：{{path}}"
+    deleteMedia: "删除素材：{{path}}"
+
+app_title: 文文。新闻 编辑部
+site_url: https://EXAMPLE.vercel.app
+publish_mode: simple
+logo:
+  src: /media/emblem.png
+
+media_folder: public/uploads
+public_folder: /uploads
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 一篇文章
+    folder: content/posts
+    create: true
+    extension: md
+    slug: "{{fields.slug}}"
+    preview_path: "posts/{{fields.slug}}"
+    sortable_fields: [date, title]
+    fields:
+      - name: title
+        label: 标题
+        widget: string
+      - name: slug
+        label: URL 标识
+        widget: string
+        hint: 拼音或英文短名，用小写字母、数字和连字符，例如 campus-daily-01
+      - name: date
+        label: 日期
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        picker_utc: true
+      - name: category
+        label: 栏目
+        widget: select
+        options:
+          - { label: 校园, value: campus }
+          - { label: 人物, value: people }
+          - { label: 评论, value: opinion }
+          - { label: 副刊, value: culture }
+          - { label: 图集, value: photo }
+      - name: author
+        label: 作者
+        widget: string
+        hint: 署名，可用笔名
+      - name: cover
+        label: 题图
+        widget: image
+        required: false
+        hint: 可选；建议宽度 1600 像素以内
+      - name: excerpt
+        label: 摘要
+        widget: text
+        required: false
+        hint: 一句话，用于列表和分享卡片；留空会自动截取正文开头
+      - name: draft
+        label: 存为草稿
+        widget: boolean
+        default: false
+        required: false
+      - name: body
+        label: 正文
+        widget: markdown
+
+  - name: pages
+    label: 页面
+    files:
+      - name: about
+        label: 关于本刊
+        file: content/pages/about.md
+        fields:
+          - name: title
+            label: 标题
+            widget: string
+          - name: body
+            label: 正文
+            widget: markdown
+
+  - name: settings
+    label: 站点设置
+    files:
+      - name: site
+        label: 刊头与页脚
+        file: content/settings/site.yml
+        format: yaml
+        fields:
+          - name: issue
+            label: 期号
+            widget: string
+          - name: footer_note
+            label: 页脚说明
+            widget: string
+          - name: credits
+            label: 素材授权说明
+            widget: string
