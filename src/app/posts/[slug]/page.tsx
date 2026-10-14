@@ -53,7 +53,7 @@ export default async function PostPage({ params }: Props) {
       ) : null}
       <div className="prose" dangerouslySetInnerHTML={{ __html: post.html }} />
       <div className="end-mark" aria-hidden="true">
-        ■
+        完
       </div>
       <Link className="article-back" href="/">
         ← 返回头版

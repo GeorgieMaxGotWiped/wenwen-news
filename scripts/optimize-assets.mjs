@@ -1,14 +1,14 @@
 /**
  * 把 assets-src/ 里的原始素材处理成站点使用的 public/media/ 文件：
  * - 校徽（圆形透明底）、favicon
- * - 「江苏省泰州中学」字标
+ * - 「江苏省泰州中学」字标的浅色墨迹版（深色界面用）
  * - 射命丸文插画（webp）
- * - 插画的墨色水印版（报头/页脚背景用）与竖版校徽标识（页脚用）
+ * - 插画的浅色墨迹水印版（页面背景用）与竖版校徽标识（页脚用）
  * - 分享卡片 og.jpg
  * 并打印校徽主色，供 CSS 使用。
  * 用法：npm run assets
  */
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
 
@@ -17,6 +17,8 @@ const src = path.join(root, "assets-src");
 const out = path.join(root, "public", "media");
 const appDir = path.join(root, "src", "app");
 
+// public/media 完全由本脚本生成，先清空再重建，避免残留旧文件
+await rm(out, { recursive: true, force: true });
 await mkdir(out, { recursive: true });
 
 const emblemSource = path.join(src, "校徽-横版.png");
@@ -79,11 +81,7 @@ const wordmarkSlice = await sharp(emblemSource)
   .png()
   .toBuffer();
 
-await sharp(wordmarkSlice)
-  .trim({ threshold: 12 })
-  .resize({ width: 1260, withoutEnlargement: false })
-  .png()
-  .toFile(path.join(out, "wordmark.png"));
+const wordmarkTrimmed = await sharp(wordmarkSlice).trim({ threshold: 12 }).png().toBuffer();
 
 const cameraSource = path.join(src, "射命丸文-插画-相机.jfif");
 await sharp(cameraSource).resize({ width: 1600 }).webp({ quality: 82 }).toFile(path.join(out, "aya-camera.webp"));
@@ -99,17 +97,13 @@ const standingMeta = await sharp(standingTrimmed)
   .webp({ quality: 85 })
   .toFile(path.join(out, "aya-standing.webp"));
 
-// 竖版校徽：页脚的出版标识
+// 竖版校徽：页脚的出版标识（浅色墨迹版）
 const stackSource = path.join(src, "校徽-竖版.png");
-await sharp(stackSource)
-  .trim({ threshold: 12 })
-  .resize({ height: 132 })
-  .webp({ quality: 90 })
-  .toFile(path.join(out, "school-stack.webp"));
+const stackTrimmed = await sharp(stackSource).trim({ threshold: 12 }).png().toBuffer();
 
-// 插画转墨色水印：亮部透明、暗部为品牌青色，可叠在任意背景上
-const INK = { r: 0x00, g: 0x76, b: 0x72 };
-async function writeInkImage(input, output, resize) {
+// 插画转墨迹水印：亮部透明、暗部着色，可叠在深色背景上
+const INK_LIGHT = { r: 0x86, g: 0xcb, b: 0xbf };
+async function writeInkImage(input, output, resize, ink = INK_LIGHT) {
   const { data, info } = await sharp(input)
     .resize(resize)
     .flatten({ background: "#ffffff" })
@@ -118,9 +112,9 @@ async function writeInkImage(input, output, resize) {
     .toBuffer({ resolveWithObject: true });
   const pixels = Buffer.alloc(info.width * info.height * 4);
   for (let i = 0, j = 0; i < data.length; i += 1, j += 4) {
-    pixels[j] = INK.r;
-    pixels[j + 1] = INK.g;
-    pixels[j + 2] = INK.b;
+    pixels[j] = ink.r;
+    pixels[j + 1] = ink.g;
+    pixels[j + 2] = ink.b;
     pixels[j + 3] = 255 - data[i];
   }
   await sharp(pixels, { raw: { width: info.width, height: info.height, channels: 4 } })
@@ -130,6 +124,8 @@ async function writeInkImage(input, output, resize) {
 
 await writeInkImage(flyingSource, path.join(out, "ink-aya-flying.webp"), { width: 1400 });
 await writeInkImage(standingTrimmed, path.join(out, "ink-aya-standing.webp"), { height: 1100 });
+await writeInkImage(wordmarkTrimmed, path.join(out, "wordmark-light.webp"), { width: 1000 });
+await writeInkImage(stackTrimmed, path.join(out, "school-stack-light.webp"), { height: 160 });
 
 const { data, info } = await sharp(emblemBuffer).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 let r = 0;
@@ -152,13 +148,13 @@ console.log(`校徽主色：#${hex(r)}${hex(g)}${hex(b)}（可直接用于 CSS �
 const outputs = [
   "emblem.png",
   "emblem-sm.png",
-  "wordmark.png",
-  "school-stack.webp",
   "aya-camera.webp",
   "aya-flying.webp",
   "aya-standing.webp",
   "ink-aya-flying.webp",
   "ink-aya-standing.webp",
+  "wordmark-light.webp",
+  "school-stack-light.webp",
   "og.jpg",
 ];
 for (const file of outputs) {

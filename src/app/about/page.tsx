@@ -27,7 +27,7 @@ export default async function AboutPage() {
             <figcaption>射命丸文</figcaption>
           </figure>
           <div className="about-mark">
-            <img src="/media/wordmark.png" alt="江苏省泰州中学" />
+            <img src="/media/wordmark-light.webp" alt="江苏省泰州中学" />
           </div>
         </aside>
       </div>

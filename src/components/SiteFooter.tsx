@@ -31,8 +31,8 @@ export default function SiteFooter() {
         </nav>
       </div>
       <div className="footer-bottom">
-        <img className="footer-colophon" src="/media/school-stack.webp" alt="江苏省泰州中学" />
-        <span>© {year} 文文。新闻 · 学生自办</span>
+        <span>© {year} 文文。新闻 · {site.issue} · 学生自办</span>
+        <img className="footer-colophon" src="/media/school-stack-light.webp" alt="江苏省泰州中学" />
       </div>
     </footer>
   );

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { getSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
@@ -19,6 +19,10 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [{ url: "/media/og.jpg", width: 1200, height: 630 }],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0e1516",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

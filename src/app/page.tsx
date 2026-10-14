@@ -56,6 +56,7 @@ export default function HomePage() {
             </ul>
           </section>
           <section>
+            <img className="rail-art" src="/media/aya-flying.webp" alt="射命丸文插画" />
             <h2 className="kicker">关于本刊</h2>
             <p className="rail-note">{SITE_DESCRIPTION}</p>
             <Link className="rail-more" href="/about">
