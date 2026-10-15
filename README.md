@@ -84,6 +84,33 @@ npm run typecheck  # 类型检查
 
 命令行方式（可选）：`npx vercel login` 后执行 `npx vercel --prod`。
 
+## 账号与投稿
+
+访问者可以在 `/register` 用「昵称 + 邮箱 + 密码」注册，登录后在 `/submit` 投稿；稿件先进入待审状态，管理员在 `/review` 审核：
+
+- **通过并发布**：稿件会生成 Markdown 文件提交到本仓库的 `content/posts/`（部署环境通过 `GITHUB_TOKEN` 提交，触发 Vercel 自动重新部署，约 1 分钟后上线）。
+- **退回**：可以填写退回原因，作者在「我的投稿」里能看到。
+
+页面一览：`/register` 注册 · `/login` 登录 · `/submit` 投稿 · `/my` 我的投稿 · `/review` 审核（仅管理员）。
+
+需要新增的环境变量（Vercel → Settings → Environment Variables）：
+
+| 变量 | 说明 |
+| --- | --- |
+| `AUTH_SECRET` | 登录会话签名密钥，填一段随机长字符串（本地开发可不填） |
+| `ADMIN_EMAILS` | 管理员邮箱，逗号分隔；只有这些账号能进入审核页 |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob 令牌；在 Vercel 控制台创建 Blob 存储后自动注入，用于存放账号、投稿与题图 |
+| `GITHUB_TOKEN` | 细粒度令牌，仓库 Contents 读写权限，用于发布稿件 |
+| `GITHUB_REPO` | 仓库，如 `owner/repo` |
+| `GITHUB_BRANCH` | 可选，默认 `main` |
+
+本机开发不需要任何云服务：账号与投稿存在 `.tmp/store/`，审核通过的文章会直接写进 `content/posts/`，重新构建即可看到。
+
+注意事项：
+
+- 注册没有邮件验证和验证码；公开上线后如果被恶意注册，可以再加邀请码或邮箱验证。
+- 用户数据存放在 Vercel Blob（路径随机不可猜，但存储桶是公开读的）；要更强隐私可以升级为数据库方案。
+
 ## 常用脚本
 
 ```bash

@@ -24,6 +24,7 @@ export default function SiteFooter() {
         </nav>
         <nav className="footer-col" aria-label="本站">
           <div className="footer-kicker">本站</div>
+          <Link href="/submit">投稿</Link>
           <Link href="/about">关于本刊</Link>
           <Link href="/search">搜索</Link>
           <a href="/feed.xml">RSS 订阅</a>

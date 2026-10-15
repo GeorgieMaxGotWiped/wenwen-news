@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AccountNav from "@/components/AccountNav";
 import SectionNav from "@/components/SectionNav";
 
 export default function SiteHeader() {
@@ -17,6 +18,7 @@ export default function SiteHeader() {
           <Link href="/search">搜索</Link>
           <a href="/feed.xml">RSS</a>
         </nav>
+        <AccountNav />
       </div>
     </header>
   );
