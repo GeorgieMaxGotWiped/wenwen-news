@@ -1,11 +1,11 @@
 # 《文文。新闻》内容后台配置
-# 部署后需要修改两处（见 README）：repo 和 base_url / site_url 里 EXAMPLE 开头的域名。
+# 站点域名：news.skyblockgod.xyz / 仓库：GeorgieMaxGotWiped/wenwen-news
 
 backend:
   name: github
-  repo: OWNER/REPO
+  repo: GeorgieMaxGotWiped/wenwen-news
   branch: main
-  base_url: https://EXAMPLE.vercel.app/api
+  base_url: https://news.skyblockgod.xyz/api
   commit_messages:
     create: "新增文章：{{title}}"
     update: "更新文章：{{title}}"
@@ -14,7 +14,7 @@ backend:
     deleteMedia: "删除素材：{{path}}"
 
 app_title: 文文。新闻 编辑部
-site_url: https://EXAMPLE.vercel.app
+site_url: https://news.skyblockgod.xyz
 publish_mode: simple
 logo:
   src: /media/emblem.png
