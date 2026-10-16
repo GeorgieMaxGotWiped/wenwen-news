@@ -1,0 +1,36 @@
+# 推送到 main 后自动部署到 Vercel 生产环境
+# 需要的仓库 Secret：VERCEL_TOKEN（Vercel 账号访问令牌）；
+# 未配置时会跳过部署（显示为绿色成功），配置后下一次推送即生效。
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: team_rKVwCji2tNbSUE6rrlLPl3zo
+      VERCEL_PROJECT_ID: prj_ZnXX8lExtdEOTqMdi9NChxWQjpQ2
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Check deploy token
+        id: check
+        run: |
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "VERCEL_TOKEN 未配置，跳过部署。在仓库 Settings → Secrets and variables → Actions 中添加后即可生效。"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.skip == 'false'
+      - name: Deploy to Vercel (production)
+        if: steps.check.outputs.skip == 'false'
+        run: npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN"
