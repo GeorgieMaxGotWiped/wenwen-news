@@ -56,6 +56,7 @@ export default async function PostPage({ params }: Props) {
       <div className="end-mark" aria-hidden="true">
         完
       </div>
+      <p className="article-copyright">本文版权归作者所有，未经许可请勿转载或二次发布。</p>
       <CommentSection slug={post.slug} />
       <Link className="article-back" href="/">
         ← 返回头版

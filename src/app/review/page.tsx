@@ -45,6 +45,9 @@ export default async function ReviewPage({
       <p className="auth-note">
         通过后会生成文章并提交到仓库，部署环境会自动重新构建，约 1 分钟后上线。
       </p>
+      <p className="review-rules">
+        审核要点：原创、非 AI 批量生成；无违法违规、人身攻击、隐私泄露和广告内容。一稿多投或已在其他平台发布的稿件请退回。
+      </p>
       {params.msg === "published" ? (
         <p className="alert alert-ok">
           已通过并提交发布。{params.slug ? <Link href={`/posts/${params.slug}`}>查看文章 →</Link> : null}

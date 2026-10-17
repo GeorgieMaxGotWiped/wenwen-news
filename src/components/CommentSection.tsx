@@ -60,6 +60,7 @@ export default function CommentSection({ slug }: { slug: string }) {
         评论
         {comments && comments.length > 0 ? <span className="comment-count">{comments.length}</span> : null}
       </h2>
+      <p className="comment-rules">请勿刷屏或发布 AI 批量生成内容；违规评论会被移除。</p>
 
       {user === undefined ? null : user ? (
         <form ref={formRef} action={formAction} className="comment-form">

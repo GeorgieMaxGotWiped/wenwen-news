@@ -799,6 +799,13 @@ a {
   text-underline-offset: 3px;
 }
 
+.article-copyright {
+  margin: 8px 0 32px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  text-align: center;
+}
+
 /* ===== 评论区 ===== */
 
 .comment-section {
@@ -811,6 +818,12 @@ a {
   color: var(--text-3);
   font-size: 13px;
   font-weight: 500;
+}
+
+.comment-rules {
+  margin: -6px 0 16px;
+  color: var(--text-3);
+  font-size: 12.5px;
 }
 
 .comment-form {
@@ -1226,6 +1239,39 @@ a {
   margin: 0 0 20px;
   color: var(--text-3);
   font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.guidelines {
+  margin: 18px 0 20px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.guidelines h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.guidelines ul {
+  margin: 0;
+  padding-left: 1.15em;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+
+.guidelines li {
+  margin: 3px 0;
+}
+
+.review-rules {
+  margin: 0 0 18px;
+  color: var(--text-3);
+  font-size: 12.5px;
   line-height: 1.7;
 }
 
