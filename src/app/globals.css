@@ -643,17 +643,46 @@ a {
   margin: 0 0 1.1em;
 }
 
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.prose h1 {
+  margin: 2em 0 0.8em;
+  font-size: 25px;
+}
+
 .prose h2 {
   margin: 1.8em 0 0.8em;
   font-size: 21px;
-  font-weight: 700;
-  line-height: 1.5;
 }
 
 .prose h3 {
   margin: 1.6em 0 0.6em;
   font-size: 17.5px;
-  font-weight: 700;
+}
+
+.prose h4 {
+  margin: 1.5em 0 0.5em;
+  font-size: 16px;
+}
+
+.prose h5 {
+  margin: 1.4em 0 0.5em;
+  font-size: 15px;
+}
+
+.prose h6 {
+  margin: 1.3em 0 0.4em;
+  font-size: 14px;
+  color: var(--text-2);
 }
 
 .prose blockquote {
@@ -672,7 +701,8 @@ a {
 }
 
 .prose img {
-  width: 100%;
+  max-width: 100%;
+  height: auto;
   border-radius: var(--radius-sm);
 }
 
@@ -684,11 +714,23 @@ a {
 
 .prose ul,
 .prose ol {
+  margin: 0 0 1.1em;
   padding-left: 1.5em;
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin: 0.35em 0;
 }
 
 .prose li {
   margin: 0.35em 0;
+}
+
+.prose input[type="checkbox"] {
+  accent-color: var(--accent);
+  margin: 0 6px 0 0;
+  vertical-align: -2px;
 }
 
 .prose code {
@@ -705,6 +747,7 @@ a {
   border-radius: var(--radius-sm);
   padding: 14px 16px;
   overflow: auto;
+  line-height: 1.7;
 }
 
 .prose pre code {
@@ -729,6 +772,11 @@ a {
   border: 1px solid var(--line-strong);
   padding: 8px 10px;
   text-align: left;
+}
+
+.prose th {
+  background: var(--surface-2);
+  font-weight: 600;
 }
 
 .end-mark {
