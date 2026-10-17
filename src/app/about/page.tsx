@@ -29,7 +29,6 @@ export default async function AboutPage() {
           </div>
         </aside>
       </div>
-      <p className="about-credits">{site.credits}</p>
     </div>
   );
 }

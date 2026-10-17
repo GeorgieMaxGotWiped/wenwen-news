@@ -12,7 +12,6 @@ export default function SiteFooter() {
         <div className="footer-col footer-col-main">
           <div className="footer-name">文文。新闻</div>
           <p>{site.footerNote}</p>
-          <p className="footer-muted">{site.credits}</p>
         </div>
         <nav className="footer-col" aria-label="栏目">
           <div className="footer-kicker">栏目</div>

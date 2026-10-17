@@ -9,13 +9,11 @@ export const SITE_DESCRIPTION = "江苏省泰州中学学生自办的校园刊�
 export type SiteSettings = {
   issue: string;
   footerNote: string;
-  credits: string;
 };
 
 const DEFAULTS: SiteSettings = {
   issue: "第 001 期",
   footerNote: "学生自办刊物，不代表学校官方立场",
-  credits: "站内素材均已征得作者同意使用",
 };
 
 function readString(data: Record<string, unknown>, key: string, fallback: string): string {
@@ -30,7 +28,6 @@ export function getSite(): SiteSettings {
     return {
       issue: readString(data, "issue", DEFAULTS.issue),
       footerNote: readString(data, "footer_note", DEFAULTS.footerNote),
-      credits: readString(data, "credits", DEFAULTS.credits),
     };
   } catch {
     return DEFAULTS;

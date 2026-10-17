@@ -773,14 +773,6 @@ a {
   opacity: 0.95;
 }
 
-.about-credits {
-  margin: 40px 0 20px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  color: var(--text-3);
-  font-size: 12.5px;
-}
-
 /* ===== 404 ===== */
 
 .notfound {
@@ -868,11 +860,6 @@ a {
   margin: 0 0 6px;
   font-size: 13.5px;
   color: var(--text-2);
-}
-
-.footer-muted {
-  color: var(--text-3);
-  font-size: 12.5px;
 }
 
 .footer-kicker {

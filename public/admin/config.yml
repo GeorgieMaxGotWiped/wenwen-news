@@ -109,6 +109,3 @@ collections:
           - name: footer_note
             label: 页脚说明
             widget: string
-          - name: credits
-            label: 素材授权说明
-            widget: string
