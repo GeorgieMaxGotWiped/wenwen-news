@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { submitAction } from "@/lib/actions";
 import type { Category } from "@/lib/categories";
 
@@ -75,14 +76,7 @@ export default function SubmitForm({
       </div>
       <div className="field">
         <label htmlFor="submit-content">正文</label>
-        <textarea
-          id="submit-content"
-          className="textarea"
-          name="content"
-          rows={18}
-          required
-          placeholder={"支持 Markdown：\n## 小标题\n\n正文段落……\n\n> 引用\n\n- 列表\n\n![图片说明](图片链接)"}
-        />
+        <MarkdownEditor id="submit-content" name="content" required />
         <span className="hint">支持 Markdown 语法；投稿会先交给编辑部审核，通过后才会发布。</span>
       </div>
       <button className="btn btn-primary" type="submit" disabled={pending}>
