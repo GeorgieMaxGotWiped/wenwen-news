@@ -1,11 +1,11 @@
 # 《文文。新闻》内容后台配置
-# 站点域名：news.skyblockgod.xyz / 仓库：GeorgieMaxGotWiped/wenwen-news
+# 站点域名：stznew.com / 仓库：GeorgieMaxGotWiped/wenwen-news
 
 backend:
   name: github
   repo: GeorgieMaxGotWiped/wenwen-news
   branch: main
-  base_url: https://news.skyblockgod.xyz/api
+  base_url: https://stznew.com/api
   commit_messages:
     create: "新增文章：{{title}}"
     update: "更新文章：{{title}}"
@@ -14,7 +14,7 @@ backend:
     deleteMedia: "删除素材：{{path}}"
 
 app_title: 文文。新闻 编辑部
-site_url: https://news.skyblockgod.xyz
+site_url: https://stznew.com
 publish_mode: simple
 logo:
   src: /media/emblem.png
