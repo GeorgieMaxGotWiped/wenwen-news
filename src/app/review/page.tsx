@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { approveAction, rejectAction } from "@/lib/actions";
+import ReviewActions from "@/components/ReviewActions";
 import { getSessionUser, isAdminEmail } from "@/lib/auth";
 import { categoryName } from "@/lib/categories";
 import { renderMarkdown } from "@/lib/markdown";
@@ -80,21 +80,7 @@ export default async function ReviewPage({
                 <summary>预览正文</summary>
                 <div className="prose review-preview" dangerouslySetInnerHTML={{ __html: previews[index] }} />
               </details>
-              <div className="review-actions">
-                <form action={approveAction}>
-                  <input type="hidden" name="id" value={item.id} />
-                  <button className="btn btn-primary" type="submit">
-                    通过并发布
-                  </button>
-                </form>
-                <form action={rejectAction} className="reject-form">
-                  <input type="hidden" name="id" value={item.id} />
-                  <input className="input" name="note" maxLength={200} placeholder="退回原因（可选，作者可见）" />
-                  <button className="btn btn-ghost" type="submit">
-                    退回
-                  </button>
-                </form>
-              </div>
+              <ReviewActions id={item.id} />
             </li>
           ))}
         </ul>
