@@ -4,6 +4,7 @@ slug: markdown-2
 date: 2026-10-17
 category: campus
 author: yexo
+submissionId: smvbumnrfec36a5
 excerpt: Markdown，更丰富的表达方式
 ---
 
