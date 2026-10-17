@@ -658,7 +658,7 @@ a {
 
 .prose blockquote {
   margin: 1.4em 0;
-  padding: 2px 0 2px 16px;
+  padding: 2px 0 0 16px;
   border-left: 3px solid var(--accent);
   color: var(--text-2);
 }
