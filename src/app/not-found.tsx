@@ -1,8 +1,10 @@
 import Link from "next/link";
+import PageArt from "@/components/PageArt";
 
 export default function NotFound() {
   return (
     <div className="notfound">
+      <PageArt mood="angry" />
       <div className="notfound-text">
         <p className="notfound-code">404</p>
         <h1 className="notfound-title">此版空缺</h1>
@@ -11,7 +13,6 @@ export default function NotFound() {
           ← 返回头版
         </Link>
       </div>
-      <img className="notfound-figure" src="/media/aya-standing.webp" alt="射命丸文" width={220} height={247} />
     </div>
   );
 }

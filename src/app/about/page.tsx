@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
+import PageArt from "@/components/PageArt";
 import { parseFrontmatter } from "@/lib/frontmatter";
 import { renderMarkdown } from "@/lib/markdown";
 import { getSite } from "@/lib/site";
@@ -18,6 +19,7 @@ export default async function AboutPage() {
 
   return (
     <div className="about">
+      <PageArt mood="calm" />
       <h1 className="section-title">{title}</h1>
       <div className="about-grid">
         <div className="prose about-body" dangerouslySetInnerHTML={{ __html: html }} />

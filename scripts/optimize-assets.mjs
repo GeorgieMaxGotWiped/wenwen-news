@@ -2,7 +2,7 @@
  * 把 assets-src/ 里的原始素材处理成站点使用的 public/media/ 文件：
  * - 校徽（圆形透明底）、favicon
  * - 「江苏省泰州中学」字标的浅色墨迹版（深色界面用）
- * - 射命丸文立绘与绯想天风格表情立绘（webp，透明底）
+ * - 射命丸文立绘与绯想天风格表情立绘（webp，透明底；含页面大背景用的柔化版）
  * - 立绘的浅色墨迹水印（页面背景用）与竖版校徽标识（页脚用）
  * - 分享卡片 og.jpg
  * 并打印校徽主色，供 CSS 使用。
@@ -90,7 +90,7 @@ const standingMeta = await sharp(standingTrimmed)
   .webp({ quality: 85 })
   .toFile(path.join(out, "aya-standing.webp"));
 
-// 绯想天风格表情立绘（200x200 透明底）：首页侧栏「文文的表情」与空状态使用
+// 绯想天风格表情立绘（200x200 透明底）：空状态配图与各页面大背景
 const moodFiles = [
   ["200px-射命丸文（绯想天立绘）嬉.png", "aya-mood-cheer.webp"],
   ["200px-射命丸文（绯想天立绘）余.png", "aya-mood-calm.webp"],
@@ -102,10 +102,16 @@ for (const [source, file] of moodFiles) {
     .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 12 })
     .png()
     .toBuffer();
-  await sharp(trimmed)
+  const portrait = await sharp(trimmed)
     .resize(400, 400, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .webp({ quality: 88 })
-    .toFile(path.join(out, file));
+    .png()
+    .toBuffer();
+  await sharp(portrait).webp({ quality: 88 }).toFile(path.join(out, file));
+  await sharp(portrait)
+    .resize(960, 960, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .blur(1.4)
+    .webp({ quality: 84 })
+    .toFile(path.join(out, file.replace(/\.webp$/, "-bg.webp")));
 }
 
 // 分享卡片：深色底 + 立绘 + 校徽与字标
@@ -188,6 +194,10 @@ const outputs = [
   "aya-mood-calm.webp",
   "aya-mood-angry.webp",
   "aya-mood-tired.webp",
+  "aya-mood-cheer-bg.webp",
+  "aya-mood-calm-bg.webp",
+  "aya-mood-angry-bg.webp",
+  "aya-mood-tired-bg.webp",
   "ink-aya-standing.webp",
   "ink-aya-standing-flip.webp",
   "wordmark-light.webp",

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import EmptyPlate from "@/components/EmptyPlate";
+import PageArt from "@/components/PageArt";
 import PostRow from "@/components/PostRow";
 import { CATEGORIES, categoryName } from "@/lib/categories";
 import { formatDate, getAllPosts } from "@/lib/posts";
@@ -11,6 +12,7 @@ export default function HomePage() {
 
   return (
     <div className="home">
+      <PageArt mood="cheer" />
       <h1 className="sr-only">{SITE_DESCRIPTION}</h1>
       <div className="home-grid">
         <section className="home-main" aria-label="头版">
@@ -53,27 +55,6 @@ export default function HomePage() {
                   <Link href={`/sections/${category.slug}`}>{category.name}</Link>
                 </li>
               ))}
-            </ul>
-          </section>
-          <section>
-            <h2 className="kicker">文文的表情</h2>
-            <ul className="mood-list">
-              <li>
-                <img src="/media/aya-mood-cheer.webp" alt="射命丸文（嬉）" width={200} height={200} />
-                <span aria-hidden="true">嬉</span>
-              </li>
-              <li>
-                <img src="/media/aya-mood-calm.webp" alt="射命丸文（余）" width={200} height={200} />
-                <span aria-hidden="true">余</span>
-              </li>
-              <li>
-                <img src="/media/aya-mood-angry.webp" alt="射命丸文（怒）" width={200} height={200} />
-                <span aria-hidden="true">怒</span>
-              </li>
-              <li>
-                <img src="/media/aya-mood-tired.webp" alt="射命丸文（負）" width={200} height={200} />
-                <span aria-hidden="true">負</span>
-              </li>
             </ul>
           </section>
           <section>

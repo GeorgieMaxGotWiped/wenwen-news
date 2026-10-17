@@ -395,32 +395,69 @@ a {
   padding: 18px;
 }
 
-.mood-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px 10px;
+/* ===== 页面大背景立绘 ===== */
+
+.page-art {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
 }
 
-.mood-list li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+.page-art::after {
+  content: "";
+  position: absolute;
+  top: -110px;
+  right: -1.5vw;
+  width: min(54vw, 640px);
+  aspect-ratio: 1 / 1;
+  background: var(--page-art) no-repeat center / contain;
+  opacity: 0.22;
+  -webkit-mask-image: radial-gradient(76% 76% at 50% 50%, #000 32%, transparent 82%);
+  mask-image: radial-gradient(76% 76% at 50% 50%, #000 32%, transparent 82%);
 }
 
-.mood-list img {
-  width: 100%;
-  max-width: 132px;
-  height: auto;
+.page-art-cheer {
+  --page-art: url("/media/aya-mood-cheer-bg.webp");
 }
 
-.mood-list span {
-  font-size: 11px;
-  color: var(--text-3);
-  letter-spacing: 0.14em;
+.page-art-calm {
+  --page-art: url("/media/aya-mood-calm-bg.webp");
+}
+
+.page-art-angry {
+  --page-art: url("/media/aya-mood-angry-bg.webp");
+}
+
+.page-art-tired {
+  --page-art: url("/media/aya-mood-tired-bg.webp");
+}
+
+/* 首页以侧栏卡片为主，背景露出的部分多一些、明显一些 */
+.page-art-cheer::after {
+  top: -80px;
+  right: -2vw;
+  width: min(56vw, 680px);
+  opacity: 0.26;
+}
+
+/* 404 以「怒」立绘作为页面背景配图 */
+.page-art-angry::after {
+  opacity: 0.26;
+}
+
+/* 有专属大背景的页面不再叠加顶部水印 */
+.page:has(.page-art)::before {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .page-art::after {
+    top: -70px;
+    right: -12vw;
+    width: min(86vw, 460px);
+    opacity: 0.18;
+  }
 }
 
 .cat-list {
@@ -786,11 +823,6 @@ a {
   text-underline-offset: 3px;
 }
 
-.notfound-figure {
-  width: 220px;
-  height: auto;
-}
-
 /* ===== 页脚 ===== */
 
 .footer {
@@ -910,10 +942,6 @@ a {
     grid-template-columns: 1fr;
     gap: 26px;
     padding: 40px 0 52px;
-  }
-
-  .notfound-figure {
-    width: 160px;
   }
 
   .footer-inner {

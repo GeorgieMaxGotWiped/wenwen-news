@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageArt from "@/components/PageArt";
 import SearchBox from "@/components/SearchBox";
 import { getSearchIndex } from "@/lib/posts";
 
@@ -11,6 +12,7 @@ export default function SearchPage() {
 
   return (
     <div className="section-page">
+      <PageArt mood="tired" />
       <h1 className="section-title">搜索</h1>
       <SearchBox items={items} />
     </div>
