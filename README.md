@@ -99,6 +99,7 @@ npm run typecheck  # 类型检查
 | --- | --- |
 | `AUTH_SECRET` | 登录会话签名密钥，填一段随机长字符串（本地开发可不填） |
 | `ADMIN_EMAILS` | 管理员邮箱，逗号分隔；只有这些账号能进入审核页 |
+| `ADMIN_EMAILS_EXTRA` | 可追加管理员邮箱，逗号分隔；不会覆盖 `ADMIN_EMAILS` |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob 令牌；在 Vercel 控制台创建 Blob 存储后自动注入，用于存放账号、投稿与题图 |
 | `GITHUB_TOKEN` | 细粒度令牌，仓库 Contents 读写权限，用于发布稿件 |
 | `GITHUB_REPO` | 仓库，如 `owner/repo` |

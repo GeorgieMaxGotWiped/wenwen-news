@@ -92,10 +92,17 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   return readSessionToken(store.get(SESSION_COOKIE)?.value);
 }
 
-export function isAdminEmail(email: string): boolean {
-  const list = (process.env.ADMIN_EMAILS ?? "")
+function parseEmailList(value: string | undefined): string[] {
+  return (value ?? "")
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
+}
+
+export function isAdminEmail(email: string): boolean {
+  const list = [
+    ...parseEmailList(process.env.ADMIN_EMAILS),
+    ...parseEmailList(process.env.ADMIN_EMAILS_EXTRA),
+  ];
   return list.includes(email.trim().toLowerCase());
 }
