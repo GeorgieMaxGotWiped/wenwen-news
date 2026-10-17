@@ -663,6 +663,14 @@ a {
   color: var(--text-2);
 }
 
+.prose blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.prose blockquote blockquote {
+  margin: 0.7em 0;
+}
+
 .prose img {
   width: 100%;
   border-radius: var(--radius-sm);
