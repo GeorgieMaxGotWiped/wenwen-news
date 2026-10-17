@@ -2,8 +2,8 @@
  * 把 assets-src/ 里的原始素材处理成站点使用的 public/media/ 文件：
  * - 校徽（圆形透明底）、favicon
  * - 「江苏省泰州中学」字标的浅色墨迹版（深色界面用）
- * - 射命丸文插画（webp）
- * - 插画的浅色墨迹水印版（页面背景用）与竖版校徽标识（页脚用）
+ * - 射命丸文立绘与绯想天风格表情立绘（webp，透明底）
+ * - 立绘的浅色墨迹水印（页面背景用）与竖版校徽标识（页脚用）
  * - 分享卡片 og.jpg
  * 并打印校徽主色，供 CSS 使用。
  * 用法：npm run assets
@@ -83,19 +83,53 @@ const wordmarkSlice = await sharp(emblemSource)
 
 const wordmarkTrimmed = await sharp(wordmarkSlice).trim({ threshold: 12 }).png().toBuffer();
 
-const cameraSource = path.join(src, "射命丸文-插画-相机.jfif");
-await sharp(cameraSource).resize({ width: 1600 }).webp({ quality: 82 }).toFile(path.join(out, "aya-camera.webp"));
-await sharp(cameraSource).resize(1200, 630, { fit: "cover" }).jpeg({ quality: 84 }).toFile(path.join(out, "og.jpg"));
-
-const flyingSource = path.join(src, "射命丸文-插画-飞行.webp");
-await sharp(flyingSource).resize({ width: 1024 }).webp({ quality: 82 }).toFile(path.join(out, "aya-flying.webp"));
-
 const standingSource = path.join(src, "射命丸文-立绘.png");
 const standingTrimmed = await sharp(standingSource).trim({ threshold: 12 }).png().toBuffer();
 const standingMeta = await sharp(standingTrimmed)
   .resize({ height: 900, withoutEnlargement: false })
   .webp({ quality: 85 })
   .toFile(path.join(out, "aya-standing.webp"));
+
+// 绯想天风格表情立绘（200x200 透明底）：首页侧栏「文文的表情」与空状态使用
+const moodFiles = [
+  ["200px-射命丸文（绯想天立绘）嬉.png", "aya-mood-cheer.webp"],
+  ["200px-射命丸文（绯想天立绘）余.png", "aya-mood-calm.webp"],
+  ["200px-射命丸文怒.png", "aya-mood-angry.webp"],
+  ["200px-射命丸文負.png", "aya-mood-tired.webp"],
+];
+for (const [source, file] of moodFiles) {
+  const trimmed = await sharp(path.join(src, source))
+    .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 12 })
+    .png()
+    .toBuffer();
+  await sharp(trimmed)
+    .resize(400, 400, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .webp({ quality: 88 })
+    .toFile(path.join(out, file));
+}
+
+// 分享卡片：深色底 + 立绘 + 校徽与字标
+const ogFigure = await sharp(standingTrimmed)
+  .resize({ height: 560, fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+  .png()
+  .toBuffer();
+const ogFigureMeta = await sharp(ogFigure).metadata();
+const ogGlow = Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630"><defs><radialGradient id="g" cx="76%" cy="54%" r="48%"><stop offset="0" stop-color="#5ac8b6" stop-opacity="0.32"/><stop offset="0.6" stop-color="#5ac8b6" stop-opacity="0.12"/><stop offset="1" stop-color="#5ac8b6" stop-opacity="0"/></radialGradient></defs><rect width="1200" height="630" fill="url(#g)"/></svg>',
+);
+await sharp({ create: { width: 1200, height: 630, channels: 4, background: { r: 0x0e, g: 0x15, b: 0x16, alpha: 1 } } })
+  .composite([
+    { input: ogGlow },
+    {
+      input: ogFigure,
+      left: 1200 - (ogFigureMeta.width ?? 0) - 44,
+      top: 630 - (ogFigureMeta.height ?? 0),
+    },
+    { input: await sharp(emblemBuffer).resize(150, 150).png().toBuffer(), left: 96, top: 148 },
+    { input: await sharp(wordmarkTrimmed).resize({ width: 400 }).png().toBuffer(), left: 96, top: 326 },
+  ])
+  .jpeg({ quality: 86 })
+  .toFile(path.join(out, "og.jpg"));
 
 // 竖版校徽：页脚的出版标识（浅色墨迹版）
 const stackSource = path.join(src, "校徽-竖版.png");
@@ -122,8 +156,9 @@ async function writeInkImage(input, output, resize, ink = INK_LIGHT) {
     .toFile(output);
 }
 
-await writeInkImage(flyingSource, path.join(out, "ink-aya-flying.webp"), { width: 1400 });
 await writeInkImage(standingTrimmed, path.join(out, "ink-aya-standing.webp"), { height: 1100 });
+const standingFlipBuffer = await sharp(standingTrimmed).flop().png().toBuffer();
+await writeInkImage(standingFlipBuffer, path.join(out, "ink-aya-standing-flip.webp"), { height: 1100 });
 await writeInkImage(wordmarkTrimmed, path.join(out, "wordmark-light.webp"), { width: 1000 });
 await writeInkImage(stackTrimmed, path.join(out, "school-stack-light.webp"), { height: 160 });
 
@@ -148,11 +183,13 @@ console.log(`校徽主色：#${hex(r)}${hex(g)}${hex(b)}（可直接用于 CSS �
 const outputs = [
   "emblem.png",
   "emblem-sm.png",
-  "aya-camera.webp",
-  "aya-flying.webp",
   "aya-standing.webp",
-  "ink-aya-flying.webp",
+  "aya-mood-cheer.webp",
+  "aya-mood-calm.webp",
+  "aya-mood-angry.webp",
+  "aya-mood-tired.webp",
   "ink-aya-standing.webp",
+  "ink-aya-standing-flip.webp",
   "wordmark-light.webp",
   "school-stack-light.webp",
   "og.jpg",

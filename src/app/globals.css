@@ -194,11 +194,11 @@ a {
 .page::before {
   content: "";
   position: absolute;
-  top: -26px;
-  right: 0;
-  width: min(34vw, 380px);
-  aspect-ratio: 1024 / 543;
-  background: url("/media/ink-aya-flying.webp") no-repeat center / contain;
+  top: -46px;
+  right: -8px;
+  width: min(22vw, 240px);
+  aspect-ratio: 439 / 493;
+  background: url("/media/ink-aya-standing-flip.webp") no-repeat center / contain;
   opacity: 0.1;
   pointer-events: none;
   z-index: -1;
@@ -395,12 +395,32 @@ a {
   padding: 18px;
 }
 
-.rail-art {
+.mood-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 10px;
+}
+
+.mood-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mood-list img {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  margin-bottom: 14px;
+  max-width: 132px;
+  height: auto;
+}
+
+.mood-list span {
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
 }
 
 .cat-list {
@@ -463,19 +483,15 @@ a {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 64px 24px;
+  padding: 42px 24px 52px;
   text-align: center;
 }
 
-.empty-plate::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("/media/ink-aya-flying.webp") no-repeat right -24px center / min(58%, 360px) auto;
-  opacity: 0.22;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 88%);
-  mask-image: linear-gradient(to left, #000 30%, transparent 88%);
+.empty-plate-figure {
+  width: 96px;
+  height: auto;
+  margin: 0 auto 12px;
+  opacity: 0.95;
 }
 
 .empty-plate-title {
@@ -578,7 +594,6 @@ a {
 .article-figure img {
   width: 100%;
   border-radius: var(--radius);
-  border: 1px solid var(--line);
 }
 
 .prose {
@@ -614,7 +629,6 @@ a {
 .prose img {
   width: 100%;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
 }
 
 .prose a {
@@ -712,24 +726,8 @@ a {
   padding: 24px 26px;
 }
 
-.about-figure {
-  margin: 0;
-}
-
-.about-figure img {
-  width: 100%;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-}
-
-.about-figure figcaption {
-  margin-top: 8px;
-  color: var(--text-3);
-  font-size: 12px;
-}
-
 .about-mark {
-  margin: 22px 0 0;
+  margin: 6px 0 0;
 }
 
 .about-mark img {
@@ -1281,7 +1279,6 @@ a {
   width: 100%;
   max-height: 240px;
   object-fit: cover;
-  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   margin-top: 12px;
 }

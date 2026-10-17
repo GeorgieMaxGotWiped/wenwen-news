@@ -56,7 +56,27 @@ export default function HomePage() {
             </ul>
           </section>
           <section>
-            <img className="rail-art" src="/media/aya-flying.webp" alt="射命丸文插画" />
+            <h2 className="kicker">文文的表情</h2>
+            <ul className="mood-list">
+              <li>
+                <img src="/media/aya-mood-cheer.webp" alt="射命丸文（嬉）" width={200} height={200} />
+                <span aria-hidden="true">嬉</span>
+              </li>
+              <li>
+                <img src="/media/aya-mood-calm.webp" alt="射命丸文（余）" width={200} height={200} />
+                <span aria-hidden="true">余</span>
+              </li>
+              <li>
+                <img src="/media/aya-mood-angry.webp" alt="射命丸文（怒）" width={200} height={200} />
+                <span aria-hidden="true">怒</span>
+              </li>
+              <li>
+                <img src="/media/aya-mood-tired.webp" alt="射命丸文（負）" width={200} height={200} />
+                <span aria-hidden="true">負</span>
+              </li>
+            </ul>
+          </section>
+          <section>
             <h2 className="kicker">关于本刊</h2>
             <p className="rail-note">{SITE_DESCRIPTION}</p>
             <Link className="rail-more" href="/about">

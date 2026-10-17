@@ -22,10 +22,6 @@ export default async function AboutPage() {
       <div className="about-grid">
         <div className="prose about-body" dangerouslySetInnerHTML={{ __html: html }} />
         <aside className="about-side">
-          <figure className="about-figure">
-            <img src="/media/aya-camera.webp" alt="射命丸文插画" />
-            <figcaption>射命丸文</figcaption>
-          </figure>
           <div className="about-mark">
             <img src="/media/wordmark-light.webp" alt="江苏省泰州中学" />
           </div>

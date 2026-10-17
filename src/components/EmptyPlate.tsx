@@ -7,6 +7,7 @@ export default function EmptyPlate({
 }) {
   return (
     <div className="empty-plate">
+      <img className="empty-plate-figure" src="/media/aya-mood-tired.webp" alt="射命丸文" width={96} height={96} />
       <p className="empty-plate-title">{title}</p>
       <p className="empty-plate-note">{note}</p>
     </div>
