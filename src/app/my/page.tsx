@@ -37,11 +37,16 @@ export default async function MyPage({
     <div className="page-narrow">
       <div className="page-head">
         <h1 className="section-title">我的投稿</h1>
-        <form action={logoutAction}>
-          <button className="btn btn-ghost btn-sm" type="submit">
-            退出登录
-          </button>
-        </form>
+        <div className="page-head-actions">
+          <Link className="btn btn-ghost btn-sm" href="/profile">
+            个人资料
+          </Link>
+          <form action={logoutAction}>
+            <button className="btn btn-ghost btn-sm" type="submit">
+              退出登录
+            </button>
+          </form>
+        </div>
       </div>
       {params.ok ? (
         <p className="alert alert-ok">投稿已提交，等待编辑部审核。通过后会出现在站上。</p>

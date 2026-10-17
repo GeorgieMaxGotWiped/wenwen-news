@@ -11,11 +11,12 @@ import {
   setSessionCookie,
 } from "@/lib/auth";
 import { isCategory } from "@/lib/categories";
+import { createComment } from "@/lib/comments";
 import { verifyPassword } from "@/lib/password";
 import { publishSubmission, slugify } from "@/lib/publish";
 import { createSubmission, getSubmission, updateSubmission } from "@/lib/submissions";
 import { storePut } from "@/lib/store";
-import { createUser, findUserByEmail } from "@/lib/users";
+import { createUser, findUserByEmail, findUserById, saveUser } from "@/lib/users";
 
 const asString = (value: FormDataEntryValue | null) => (typeof value === "string" ? value : "");
 
@@ -160,4 +161,68 @@ export async function rejectAction(formData: FormData): Promise<void> {
   });
   revalidatePath("/review");
   redirect("/review?msg=rejected");
+}
+
+export async function commentAction(
+  _prev: { error?: string; ok?: boolean },
+  formData: FormData,
+): Promise<{ error?: string; ok?: boolean }> {
+  const user = await getSessionUser();
+  if (!user) return { error: "请先登录再发表评论。" };
+
+  const postSlug = asString(formData.get("postSlug")).trim();
+  const body = asString(formData.get("body")).trim();
+  if (!body) return { error: "评论内容不能为空。" };
+  if (body.length > 800) return { error: "评论请控制在 800 字以内。" };
+
+  const created = await createComment({
+    postSlug,
+    authorId: user.id,
+    authorName: user.name,
+    body,
+  });
+  if (!created) return { error: "文章不存在或已下线。" };
+  return { ok: true };
+}
+
+export async function updateProfileAction(
+  _prev: { error?: string; ok?: boolean },
+  formData: FormData,
+): Promise<{ error?: string; ok?: boolean }> {
+  const session = await getSessionUser();
+  if (!session) return { error: "登录状态已失效，请重新登录。" };
+
+  const name = asString(formData.get("name")).trim();
+  const bio = asString(formData.get("bio")).trim();
+  if (name.length < 1 || name.length > 24) return { error: "昵称需要 1 到 24 个字符。" };
+  if (bio.length > 120) return { error: "简介请控制在 120 字以内。" };
+
+  const record = await findUserById(session.id);
+  if (!record) return { error: "账号不存在，请重新注册或登录。" };
+
+  let avatarUrl = record.avatar;
+  const file = formData.get("avatar");
+  if (file instanceof File && file.size > 0) {
+    if (!file.type.startsWith("image/")) return { error: "头像需要是图片文件。" };
+    if (file.size > 2 * 1024 * 1024) return { error: "头像不能超过 2MB。" };
+    const ext =
+      file.type === "image/png" ? "png" : file.type === "image/gif" ? "gif" : file.type === "image/webp" ? "webp" : "jpg";
+    const stored = await storePut(
+      `avatars/${session.id}-${Date.now()}.${ext}`,
+      Buffer.from(await file.arrayBuffer()),
+      file.type,
+    );
+    avatarUrl = stored.url;
+  } else if (formData.get("removeAvatar") === "on") {
+    avatarUrl = undefined;
+  }
+
+  await saveUser({ ...record, name, bio, avatar: avatarUrl });
+
+  const ok = await setSessionCookie({ id: session.id, email: session.email, name });
+  if (!ok) return { error: "资料已保存，但登录状态刷新失败，请重新登录。" };
+
+  revalidatePath("/profile");
+  revalidatePath("/my");
+  return { ok: true };
 }

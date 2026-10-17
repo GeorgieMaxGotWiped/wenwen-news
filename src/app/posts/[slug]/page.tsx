@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CommentSection from "@/components/CommentSection";
 import { categoryName } from "@/lib/categories";
 import { formatDate, getAllPosts, getPost } from "@/lib/posts";
 
@@ -55,6 +56,7 @@ export default async function PostPage({ params }: Props) {
       <div className="end-mark" aria-hidden="true">
         完
       </div>
+      <CommentSection slug={post.slug} />
       <Link className="article-back" href="/">
         ← 返回头版
       </Link>

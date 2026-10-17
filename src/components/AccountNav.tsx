@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 
 type SessionInfo = {
   name: string;
   email: string;
   isAdmin: boolean;
+  avatar?: string | null;
 };
 
 export default function AccountNav() {
@@ -15,23 +17,25 @@ export default function AccountNav() {
   const [user, setUser] = useState<SessionInfo | null>(null);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
+  const load = useCallback(() => {
     fetch("/api/session", { cache: "no-store" })
       .then((response) => response.json())
       .then((data: { user: SessionInfo | null }) => {
-        if (!cancelled) {
-          setUser(data.user);
-          setLoaded(true);
-        }
+        setUser(data.user);
+        setLoaded(true);
       })
-      .catch(() => {
-        if (!cancelled) setLoaded(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
+      .catch(() => setLoaded(true));
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load, pathname]);
+
+  useEffect(() => {
+    const refresh = () => load();
+    window.addEventListener("account:refresh", refresh);
+    return () => window.removeEventListener("account:refresh", refresh);
+  }, [load]);
 
   const logout = useCallback(async () => {
     await fetch("/api/logout", { method: "POST" });
@@ -52,6 +56,10 @@ export default function AccountNav() {
       <Link href="/submit">投稿</Link>
       <Link href="/my">我的</Link>
       {user.isAdmin ? <Link href="/review">审稿</Link> : null}
+      <Link className="account-user" href="/profile" aria-label="个人资料">
+        <UserAvatar name={user.name} avatar={user.avatar} size={22} />
+        <span className="account-user-name">{user.name}</span>
+      </Link>
       <button type="button" className="link-btn" onClick={logout}>
         退出
       </button>
