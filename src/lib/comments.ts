@@ -1,52 +1,72 @@
 import { randomBytes } from "node:crypto";
-import { storeGetText, storeList, storePut } from "@/lib/store";
+import { getDatabase } from "@/lib/database";
 
 export type Comment = {
   id: string;
   postSlug: string;
   authorId: string;
   authorName: string;
+  authorAvatar?: string;
   body: string;
   createdAt: string;
 };
 
 export const isValidPostSlug = (slug: string) => /^[a-z0-9-]{1,80}$/.test(slug);
 
-const commentPath = (postSlug: string, id: string) => `comments/${postSlug}/${id}.json`;
+function toComment(row: Record<string, unknown>): Comment {
+  return {
+    id: String(row.id),
+    postSlug: String(row.post_slug),
+    authorId: String(row.author_id),
+    authorName: String(row.author_name),
+    authorAvatar: row.author_avatar == null ? undefined : String(row.author_avatar),
+    body: String(row.body),
+    createdAt: String(row.created_at),
+  };
+}
 
 export async function createComment(input: {
   postSlug: string;
   authorId: string;
   authorName: string;
+  authorAvatar?: string;
   body: string;
 }): Promise<Comment | null> {
   if (!isValidPostSlug(input.postSlug)) return null;
-  const id = `c${Date.now().toString(36)}${randomBytes(3).toString("hex")}`;
   const comment: Comment = {
-    id,
+    id: `c${Date.now().toString(36)}${randomBytes(3).toString("hex")}`,
     postSlug: input.postSlug,
     authorId: input.authorId,
     authorName: input.authorName,
+    authorAvatar: input.authorAvatar,
     body: input.body,
     createdAt: new Date().toISOString(),
   };
-  await storePut(commentPath(input.postSlug, id), JSON.stringify(comment, null, 2), "application/json");
+
+  const db = await getDatabase();
+  await db.execute({
+    sql: `INSERT INTO comments
+      (id, post_slug, author_id, author_name, author_avatar, body, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    args: [
+      comment.id,
+      comment.postSlug,
+      comment.authorId,
+      comment.authorName,
+      comment.authorAvatar ?? null,
+      comment.body,
+      comment.createdAt,
+    ],
+  });
   return comment;
 }
 
 export async function listComments(postSlug: string): Promise<Comment[]> {
   if (!isValidPostSlug(postSlug)) return [];
-  const entries = await storeList(`comments/${postSlug}/`);
-  const comments: Comment[] = [];
-  for (const entry of entries) {
-    if (!entry.pathname.endsWith(".json")) continue;
-    const text = await storeGetText(entry.pathname);
-    if (!text) continue;
-    try {
-      comments.push(JSON.parse(text) as Comment);
-    } catch {
-      // 忽略损坏的数据文件
-    }
-  }
-  return comments.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const db = await getDatabase();
+  const result = await db.execute({
+    sql: "SELECT * FROM comments WHERE post_slug = ? ORDER BY created_at ASC",
+    args: [postSlug],
+  });
+  return result.rows.map(toComment);
 }

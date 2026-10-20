@@ -13,8 +13,9 @@ import {
 import { isCategory } from "@/lib/categories";
 import { createComment } from "@/lib/comments";
 import { verifyPassword } from "@/lib/password";
+import { isSafePostSlug, updatePublishedPostCategory } from "@/lib/post-category";
 import { publishSubmission, slugify } from "@/lib/publish";
-import { createSubmission, getSubmission, updateSubmission } from "@/lib/submissions";
+import { createSubmission, getSubmission, listSubmissions, updateSubmission } from "@/lib/submissions";
 import { storePut } from "@/lib/store";
 import { createUser, findUserByEmail, findUserById, saveUser } from "@/lib/users";
 
@@ -163,6 +164,39 @@ export async function rejectAction(formData: FormData): Promise<void> {
   redirect("/review?msg=rejected");
 }
 
+export async function updatePostCategoryAction(formData: FormData): Promise<void> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login?next=/manage");
+
+  const slug = asString(formData.get("slug")).trim();
+  const category = asString(formData.get("category")).trim();
+  if (!isSafePostSlug(slug)) redirect("/manage?msg=missing");
+  if (!isCategory(category)) redirect("/manage?msg=invalid");
+
+  const published = (await listSubmissions()).find(
+    (item) => item.status === "approved" && item.publishedSlug === slug,
+  );
+  if (!isAdminEmail(user.email) && published?.authorId !== user.id) {
+    redirect("/manage?msg=forbidden");
+  }
+
+  const result = await updatePublishedPostCategory(slug, category);
+  if (!result.ok) {
+    redirect(
+      `/manage?msg=${result.missing ? "missing" : "error"}&detail=${encodeURIComponent(result.error)}`,
+    );
+  }
+
+  if (published && published.category !== category) {
+    await updateSubmission(published.id, { category });
+  }
+
+  revalidatePath("/", "layout");
+  redirect(
+    `/manage?msg=${result.changed ? "updated" : "same"}&slug=${encodeURIComponent(slug)}&category=${encodeURIComponent(category)}`,
+  );
+}
+
 export async function commentAction(
   _prev: { error?: string; ok?: boolean },
   formData: FormData,
@@ -175,10 +209,12 @@ export async function commentAction(
   if (!body) return { error: "评论内容不能为空。" };
   if (body.length > 800) return { error: "评论请控制在 800 字以内。" };
 
+  const record = await findUserById(user.id);
   const created = await createComment({
     postSlug,
     authorId: user.id,
     authorName: user.name,
+    authorAvatar: record?.avatar,
     body,
   });
   if (!created) return { error: "文章不存在或已下线。" };

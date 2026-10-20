@@ -1,6 +1,6 @@
 # 文文。新闻
 
-江苏省泰州中学学生自办的校园刊物站点。技术栈：Next.js（App Router）+ Markdown 内容 + Sveltia CMS 内容后台 + Vercel 部署。全免费方案，没有服务器和数据库。
+江苏省泰州中学学生自办的校园刊物站点。技术栈：Next.js（App Router）+ Markdown 内容 + Sveltia CMS 内容后台 + SQLite（libSQL/Turso）+ Vercel 部署。
 
 ## 目录结构
 
@@ -20,7 +20,7 @@ scripts/
 src/
   app/              页面与接口
   components/       站头、站尾、列表等
-  lib/              数据读取、栏目、SEO 配置
+  lib/              数据读取、数据库、栏目、SEO 配置
 ```
 
 ## 本地开发
@@ -93,6 +93,8 @@ npm run typecheck  # 类型检查
 
 页面一览：`/register` 注册 · `/login` 登录 · `/submit` 投稿 · `/my` 我的投稿 · `/review` 审核（仅管理员）。
 
+已发布稿件可在 `/my` 的「修改分区」进入 `/manage` 调整栏目；管理员也能在 `/review` 进入该页，调整所有已发布文章的分区。
+
 需要新增的环境变量（Vercel → Settings → Environment Variables）：
 
 | 变量 | 说明 |
@@ -100,12 +102,14 @@ npm run typecheck  # 类型检查
 | `AUTH_SECRET` | 登录会话签名密钥，填一段随机长字符串（本地开发可不填） |
 | `ADMIN_EMAILS` | 管理员邮箱，逗号分隔；只有这些账号能进入审核页 |
 | `ADMIN_EMAILS_EXTRA` | 可追加管理员邮箱，逗号分隔；不会覆盖 `ADMIN_EMAILS` |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob 令牌；在 Vercel 控制台创建 Blob 存储后自动注入，用于存放账号、投稿与题图 |
+| `BLOB_READ_WRITE_TOKEN` | 图片对象存储令牌；用于头像、题图和其他上传图片 |
+| `TURSO_DATABASE_URL` | libSQL/Turso 数据库地址，存放账号、投稿和评论 |
+| `TURSO_AUTH_TOKEN` | libSQL/Turso 数据库访问令牌 |
 | `GITHUB_TOKEN` | 细粒度令牌，仓库 Contents 读写权限，用于发布稿件 |
 | `GITHUB_REPO` | 仓库，如 `owner/repo` |
 | `GITHUB_BRANCH` | 可选，默认 `main` |
 
-本机开发不需要任何云服务：账号与投稿存在 `.tmp/store/`，审核通过的文章会直接写进 `content/posts/`，重新构建即可看到。
+本机开发不需要任何云服务：结构化数据存在 `.tmp/wenwen.sqlite`，上传图片存在 `.tmp/store/`，审核通过的文章会直接写进 `content/posts/`，重新构建即可看到。`BLOB_READ_WRITE_TOKEN` 现在只用于图片，不再保存账号、投稿或评论。
 
 注意事项：
 
@@ -117,7 +121,18 @@ npm run typecheck  # 类型检查
 ```bash
 npm run assets      # 重新生成 public/media 图片（改素材后执行）
 npm run vendor:cms  # 升级 @sveltia/cms 后，重新就地化后台文件
+npm run blob:export -- .tmp/blob-export  # 导出旧 Vercel Blob 数据
+npm run db:migrate -- .tmp/blob-export   # 将导出的数据导入 libSQL/SQLite
 ```
+
+## 从 Vercel Blob 迁移数据
+
+1. 设置 `BLOB_READ_WRITE_TOKEN` 后运行 `npm run blob:export -- .tmp/blob-export`。
+2. 创建 Turso 数据库，配置 `TURSO_DATABASE_URL` 和 `TURSO_AUTH_TOKEN`。
+3. 运行 `npm run db:migrate -- .tmp/blob-export`。
+4. 若新部署使用本地持久磁盘而不是 Blob，再以 `REWRITE_MEDIA_URLS=1` 重新迁移，把图片地址改写为 `/api/blob/...`。
+
+旧 Blob 中的图片可以在解封期间正常读取，但新 Vercel 项目应使用新的 Blob 存储或持久磁盘。
 
 ## 几个约定
 

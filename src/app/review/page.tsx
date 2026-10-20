@@ -41,7 +41,14 @@ export default async function ReviewPage({
 
   return (
     <div className="page-narrow page-narrow-wide">
-      <h1 className="section-title">投稿审核</h1>
+      <div className="page-head">
+        <h1 className="section-title">投稿审核</h1>
+        <div className="page-head-actions">
+          <Link className="btn btn-ghost btn-sm" href="/manage">
+            修改已发布文章分区
+          </Link>
+        </div>
+      </div>
       <p className="auth-note">
         通过后会生成文章并提交到仓库，部署环境会自动重新构建，约 1 分钟后上线。
       </p>

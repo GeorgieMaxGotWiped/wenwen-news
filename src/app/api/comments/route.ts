@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isValidPostSlug, listComments } from "@/lib/comments";
-import { listUsers } from "@/lib/users";
+import { findUserById } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
@@ -10,14 +10,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "文章标识不正确。" }, { status: 400 });
   }
 
-  const [comments, users] = await Promise.all([listComments(slug), listUsers()]);
-  const byId = new Map(users.map((user) => [user.id, user]));
+  const comments = await listComments(slug);
+  const authorIds = [...new Set(comments.map((comment) => comment.authorId))];
+  const users = await Promise.all(authorIds.map((id) => findUserById(id)));
+  const byId = new Map(users.filter((user) => user !== null).map((user) => [user.id, user]));
 
   return NextResponse.json({
     comments: comments.map((comment) => ({
       id: comment.id,
       name: byId.get(comment.authorId)?.name ?? comment.authorName,
-      avatar: byId.get(comment.authorId)?.avatar ?? null,
+      avatar: comment.authorAvatar ?? byId.get(comment.authorId)?.avatar ?? null,
       body: comment.body,
       createdAt: comment.createdAt,
     })),

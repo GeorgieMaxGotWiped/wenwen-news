@@ -38,6 +38,11 @@ export default async function MyPage({
       <div className="page-head">
         <h1 className="section-title">我的投稿</h1>
         <div className="page-head-actions">
+          {submissions.some((item) => item.status === "approved" && item.publishedSlug) ? (
+            <Link className="btn btn-ghost btn-sm" href="/manage">
+              修改分区
+            </Link>
+          ) : null}
           <Link className="btn btn-ghost btn-sm" href="/profile">
             个人资料
           </Link>
@@ -71,7 +76,9 @@ export default async function MyPage({
                 {item.reviewNote ? <p className="sub-note">审核意见：{item.reviewNote}</p> : null}
                 {item.status === "approved" && item.publishedSlug ? (
                   <p className="sub-note">
-                    <Link href={`/posts/${item.publishedSlug}`}>查看文章 →</Link>
+                    <Link href={`/posts/${item.publishedSlug}`}>查看文章</Link>
+                    {" · "}
+                    <Link href={`/manage#post-${item.publishedSlug}`}>修改分区</Link>
                   </p>
                 ) : null}
               </li>

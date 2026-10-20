@@ -11,10 +11,14 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "blob:export": "node scripts/export-vercel-blob.mjs",
+    "db:migrate": "node scripts/migrate-store-to-db.mjs",
+    "media:migrate": "node scripts/migrate-media-to-blob.mjs",
     "assets": "node scripts/optimize-assets.mjs",
     "vendor:cms": "node scripts/vendor-cms.mjs"
   },
   "dependencies": {
+    "@libsql/client": "^0.18.0",
     "@vercel/blob": "^2.8.2",
     "next": "16.4.0",
     "react": "^19.3.0",

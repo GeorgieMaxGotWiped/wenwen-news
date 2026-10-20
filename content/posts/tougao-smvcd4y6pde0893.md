@@ -5,7 +5,7 @@ date: 2026-10-17
 category: culture
 author: 窾坎镗鞜
 submissionId: smvcd4y6pde0893
-cover: https://pmoensvnp9ewvszw.public.blob.vercel-storage.com/uploads/2549d54a-4dd0-49e5-98a9-39d4a0eb9bb2.jpg
+cover: https://dvj4i2lnxlultjln.public.blob.vercel-storage.com/uploads/2549d54a-4dd0-49e5-98a9-39d4a0eb9bb2.jpg
 excerpt: 并不是散文诗的不明文字（）
 ---
 
