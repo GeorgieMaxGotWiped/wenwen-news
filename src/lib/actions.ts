@@ -229,9 +229,9 @@ export async function updateProfileAction(
   if (!session) return { error: "登录状态已失效，请重新登录。" };
 
   const name = asString(formData.get("name")).trim();
-  const bio = asString(formData.get("bio")).trim();
+  const bio = asString(formData.get("bio")).replace(/\r\n?/g, "\n").trim();
   if (name.length < 1 || name.length > 24) return { error: "昵称需要 1 到 24 个字符。" };
-  if (bio.length > 120) return { error: "简介请控制在 120 字以内。" };
+  if (bio.length > 500) return { error: "简介请控制在 500 字以内。" };
 
   const record = await findUserById(session.id);
   if (!record) return { error: "账号不存在，请重新注册或登录。" };

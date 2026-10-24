@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import UserAvatar from "@/components/UserAvatar";
 import { updateProfileAction } from "@/lib/actions";
 
@@ -97,13 +98,14 @@ export default function ProfileForm({ user }: { user: ProfileUser }) {
 
       <div className="field">
         <label htmlFor="profile-bio">简介</label>
-        <textarea
+        <MarkdownEditor
           id="profile-bio"
-          className="textarea textarea-sm"
           name="bio"
-          maxLength={120}
           defaultValue={user.bio}
-          placeholder="一句话介绍自己"
+          rows={8}
+          maxLength={500}
+          compact
+          placeholder="用 Markdown 介绍自己……"
         />
       </div>
 

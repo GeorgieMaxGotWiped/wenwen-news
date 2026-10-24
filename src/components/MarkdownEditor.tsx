@@ -9,12 +9,22 @@ export default function MarkdownEditor({
   id,
   name,
   required,
+  defaultValue = "",
+  rows = 18,
+  maxLength,
+  placeholder = PLACEHOLDER,
+  compact = false,
 }: {
   id: string;
   name: string;
   required?: boolean;
+  defaultValue?: string;
+  rows?: number;
+  maxLength?: number;
+  placeholder?: string;
+  compact?: boolean;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue);
   const [html, setHtml] = useState("");
   const [rendering, setRendering] = useState(false);
   const latest = useRef(0);
@@ -48,7 +58,7 @@ export default function MarkdownEditor({
   }, [value]);
 
   return (
-    <div className="md-editor">
+    <div className={compact ? "md-editor md-editor-compact" : "md-editor"}>
       <div className="md-editor-pane">
         <div className="md-editor-bar">
           <span>Markdown</span>
@@ -57,11 +67,12 @@ export default function MarkdownEditor({
           id={id}
           name={name}
           className="textarea md-editor-input"
-          rows={18}
+          rows={rows}
+          maxLength={maxLength}
           required={required}
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          placeholder={PLACEHOLDER}
+          placeholder={placeholder}
         />
       </div>
       <div className="md-editor-pane">

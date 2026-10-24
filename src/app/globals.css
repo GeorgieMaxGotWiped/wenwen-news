@@ -1477,6 +1477,16 @@ a {
   line-height: 1.9;
 }
 
+.md-editor-compact .md-editor-input,
+.md-editor-compact .md-editor-preview {
+  min-height: 190px;
+  max-height: 320px;
+}
+
+.md-editor-compact .md-editor-preview {
+  padding: 12px 14px;
+}
+
 .md-editor-empty {
   margin: 0;
   color: var(--text-3);
@@ -1495,6 +1505,15 @@ a {
   .md-editor-preview {
     min-height: 220px;
     max-height: 420px;
+  }
+
+  .md-editor-compact .md-editor-input {
+    min-height: 180px;
+  }
+
+  .md-editor-compact .md-editor-preview {
+    min-height: 150px;
+    max-height: 280px;
   }
 }
 
